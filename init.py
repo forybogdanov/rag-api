@@ -3,9 +3,12 @@ from qdrant_client import QdrantClient
 from dotenv import load_dotenv
 from qdrant_client.http.models import Distance, VectorParams
 import os
+
 load_dotenv()
 
 COLLECTION = os.getenv("COLLECTION")
+
+print(COLLECTION)
 
 client = QdrantClient(path="tmp/langchain-qdrant")
 
