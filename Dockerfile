@@ -4,9 +4,9 @@ WORKDIR /code
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-RUN python init.py
-
 COPY . .
+
+RUN python init.py
 
 EXPOSE 8000
 
