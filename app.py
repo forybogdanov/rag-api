@@ -22,3 +22,10 @@ client = QdrantClient(url=QDRANT_DOMAIN)
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
+@app.get("/create-collection")
+async def create_collection():
+    client.recreate_collection(collection_name="collection 1")
+    return {"message": "Collection created"}
+
+
