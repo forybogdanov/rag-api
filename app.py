@@ -25,7 +25,10 @@ async def root():
 
 @app.get("/create-collection")
 async def create_collection():
-    client.recreate_collection(collection_name="collection 1")
+    client.recreate_collection(
+        collection_name="collection 1",
+        vector_params=VectorParams(size=3072, distance=Distance.COSINE),
+    )
     return {"message": "Collection created"}
 
 
