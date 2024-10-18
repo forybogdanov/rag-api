@@ -19,12 +19,6 @@ embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
 
 client = QdrantClient(path="tmp/langchain-qdrant")
 
-if client.get_collection(collection_name=COLLECTION) is None:
-    client.create_collection(
-        collection_name=COLLECTION,
-        vectors_config=VectorParams(size=3072, distance=Distance.COSINE),
-    )
-
 vector_store = QdrantVectorStore(
     client=client,
     collection_name=COLLECTION,
