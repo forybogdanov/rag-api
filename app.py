@@ -16,7 +16,7 @@ QDRANT_DOMAIN = os.getenv("QDRANT_DOMAIN")
 
 embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
 
-client = QdrantClient(url=QDRANT_DOMAIN)
+client = QdrantClient(":memory:")
 
 
 @app.get("/")

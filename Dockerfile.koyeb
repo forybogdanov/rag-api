@@ -1,5 +1,0 @@
-FROM koyeb/docker-compose
-
-COPY . /code
-
-CMD ["docker-compose", "up"]
