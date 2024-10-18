@@ -23,12 +23,15 @@ client = QdrantClient(url=QDRANT_DOMAIN)
 async def root():
     return {"message": "Hello World"}
 
-@app.get("/create-collection")
-async def create_collection():
-    client.recreate_collection(
-        collection_name="collection 1",
-        vector_params=VectorParams(size=3072, distance=Distance.COSINE),
+@app.post("/collection")
+async def create_collection(collection_name: str):
+    client.create_collection(
+        collection_name=collection_name,
+        vectors_config=VectorParams(size=3072, distance=Distance.COSINE),
     )
-    return {"message": "Collection created"}
+    return {"message": f"Collection {collection_name} created"}
 
-
+@app.delete("/collection")
+async def delete_collection(collection_name: str):
+    client.delete_collection(collection_name=collection_name)
+    return {"message": f"Collection {collection_name} deleted"}
