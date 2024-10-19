@@ -7,6 +7,8 @@ from time import sleep
 
 load_dotenv()
 
+print("Starting Qdrant collection creation...")
+
 COLLECTION = os.getenv("COLLECTION")
 
 print(f"Collection: {COLLECTION}")
@@ -19,3 +21,5 @@ client.create_collection(
 )
 
 sleep(10)
+
+print("Qdrant collection created")
