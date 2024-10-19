@@ -9,6 +9,8 @@ load_dotenv()
 
 COLLECTION = os.getenv("COLLECTION")
 
+print(f"Collection: {COLLECTION}")
+
 client = QdrantClient(path='tmp/langchain-qdrant')
 
 client.create_collection(
