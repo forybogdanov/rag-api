@@ -7,9 +7,7 @@ from time import sleep
 
 load_dotenv()
 
-COLLECTION = os.getenv("COLLECTION")
-
-print(f"Collection: {COLLECTION}")
+COLLECTION = "main"
 
 client = QdrantClient(path='tmp/langchain-qdrant')
 
