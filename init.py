@@ -13,7 +13,11 @@ COLLECTION = os.getenv("COLLECTION")
 
 print(f"Collection: {COLLECTION}")
 
-client = QdrantClient(path="tmp/langchain-qdrant")
+qdrant_path = "tmp/langchain-qdrant"
+
+os.makedirs(qdrant_path, exist_ok=True)
+
+client = QdrantClient(path=qdrant_path)
 
 client.create_collection(
     collection_name=COLLECTION,

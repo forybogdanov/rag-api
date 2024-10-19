@@ -6,7 +6,7 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-RUN python init.py
+RUN python -v init.py
 
 EXPOSE 8000
 
