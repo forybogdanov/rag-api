@@ -5,5 +5,5 @@ langchain
 langchain-openai
 langchain-qdrant
 qdrant-client
+torch>=1.11.0
 sentence-transformers
-torch==2.5.0
