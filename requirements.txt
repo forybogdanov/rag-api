@@ -1,9 +1,8 @@
-fastapi
-uvicorn
-python-dotenv
-langchain
-langchain-openai
-langchain-qdrant
-qdrant-client
-torch>=1.11.0
-sentence-transformers
+fastapi==0.111.0
+uvicorn==0.30.1
+python-dotenv==1.0.1
+langchain==0.3.4
+langchain-openai==0.1.17
+langchain-qdrant==0.1.4
+qdrant-client==1.11.2
+sentence-transformers==3.2.0
