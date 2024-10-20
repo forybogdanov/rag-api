@@ -5,4 +5,4 @@ langchain
 langchain-openai
 langchain-qdrant
 qdrant-client
-sentence-transformers
+# sentence-transformers
