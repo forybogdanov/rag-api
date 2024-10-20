@@ -13,7 +13,7 @@ client = QdrantClient(path='tmp/langchain-qdrant')
 
 client.create_collection(
     collection_name=COLLECTION,
-    vectors_config=VectorParams(size=3072, distance=Distance.COSINE),
+    vectors_config=VectorParams(size=384, distance=Distance.COSINE),
 )
 
 sleep(10)
