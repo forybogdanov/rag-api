@@ -2,13 +2,6 @@ FROM continuumio/miniconda3:latest
 
 WORKDIR /code
 
-# Install system dependencies
-# RUN apt-get update && apt-get install -y \
-#     gcc \
-#     g++ \
-#     && rm -rf /var/lib/apt/lists/*
-
-# Copy environment.yml file
 COPY environment.yml .
 
 # Create conda environment
