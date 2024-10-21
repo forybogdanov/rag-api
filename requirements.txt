@@ -4,3 +4,5 @@ python-dotenv
 langchain
 langchain_community
 sentence-transformers
+langchain-chroma
+chromadb

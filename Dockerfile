@@ -19,8 +19,6 @@ SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
 
 COPY . .
 
-RUN python ./init.py
-
 EXPOSE 8000
 
 CMD ["conda", "run", "--no-capture-output", "-n", "myenv", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]

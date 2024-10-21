@@ -10,7 +10,7 @@ dependencies:
   - pip
   - pip:
     - langchain
-    - langchain-qdrant
-    - qdrant-client
     - langchain_community
     - sentence-transformers
+    - langchain-chroma
+    - chromadb
