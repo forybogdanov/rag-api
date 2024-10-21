@@ -30,7 +30,8 @@ class RetreiveData(BaseModel):
     # top_k: int = 5
     # TODO: add filters
 
-# chroma_client = chromadb.PersistentClient("./tmp/chroma.db")
+class DeleteData(BaseModel):
+    dataset_id: str
 
 app = FastAPI()
 
@@ -47,7 +48,6 @@ async def ingest(data: IngestData):
     if (data.dataset_id is None or data.dataset_id == "" or data.files is None):
         return {"message": "Invalid request"}
 
-    # collection = chroma_client.get_or_create_collection(data.dataset_id)
     vector_store = Chroma(data.dataset_id, embeddings, "./tmp/chroma.db")
 
     folder_id = str(uuid.uuid4())
@@ -84,3 +84,11 @@ async def search(data: RetreiveData):
     vector_store = Chroma(data.dataset_id, embeddings, "./tmp/chroma.db")
     results = vector_store.similarity_search(data.prompt)
     return results
+
+@app.delete("/delete/")
+async def delete(data: DeleteData):
+    if (data.dataset_id is None or data.dataset_id == ""):
+        return {"message": "Invalid request"}
+    vector_store = Chroma(data.dataset_id, embeddings, "./tmp/chroma.db")
+    vector_store.delete_collection()
+    return {"message": "OK"}

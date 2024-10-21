@@ -14,3 +14,4 @@ dependencies:
     - sentence-transformers
     - langchain-chroma
     - chromadb
+    - pypdf
