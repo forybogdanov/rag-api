@@ -62,18 +62,19 @@ async def ingest(data: IngestData):
         response = requests.get(file)
         with open(filepath, 'wb') as f:
             f.write(response.content)
-        match extension:
-            case "txt":
+            if extension == "txt":
                 with open(filepath, "r") as f:
                     content = f.read()
                 document = Document(page_content=content, metadata={"dataset_id": data.dataset_id, "link": file}, id=file_id)
                 vector_store.add_documents([document])
-            case "pdf":
+            elif extension == "pdf":
                 loader = PyPDFLoader(filepath)
                 pages = loader.load_and_split()
                 for page in pages:
                     document = Document(page_content=page.page_content, metadata={"dataset_id": data.dataset_id, "link": file}, id=str(uuid.uuid4()))
                     vector_store.add_documents([document])
+            else:
+                continue
     return {"message": "OK"}
 
 @app.get("/retreive/")
