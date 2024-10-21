@@ -30,6 +30,10 @@ vector_store = QdrantVectorStore(
     embedding=embeddings,
 )
 
+@app.get("/")
+async def root():
+    return {"message": "ok"}
+
 @app.get("/health")
 async def health():
     return {"message": "OK"}
