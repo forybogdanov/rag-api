@@ -10,7 +10,6 @@ dependencies:
   - pip
   - pip:
     - langchain
-    - langchain-openai
     - langchain-qdrant
     - qdrant-client
     - langchain_community

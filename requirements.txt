@@ -2,8 +2,5 @@ fastapi
 uvicorn
 python-dotenv
 langchain
-langchain-openai
-langchain-qdrant
-qdrant-client
 langchain_community
 sentence-transformers
