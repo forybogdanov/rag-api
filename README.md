@@ -7,6 +7,8 @@ This project is a **Retrieval-Augmented Generation (RAG) API** built using FastA
 2. **Search/Retreival**: Retrieve the most relevant document chunks based on a query using similarity search.
 3. **Delete Data**: Remove an entire dataset from the vector store.
 
+4 **OCR PDF**: Extract text from PDF files using OCR.
+
 ## Requirements
 
 ### Python Packages

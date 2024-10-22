@@ -22,21 +22,13 @@ embeddings = HuggingFaceBgeEmbeddings(
 
 tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
 
-# TODO split code into multiple files
-
 class IngestData(BaseModel):
     files: List[str]
     dataset_id: str
-    # TODO: add metadata
-    # metadata: dict = {}
-    # TODO maybe add chunk_size
 
 class RetreiveData(BaseModel):
     prompt: str
     dataset_id: str
-    # TODO: add top_k
-    # top_k: int = 5
-    # TODO: add filters
 
 class DeleteData(BaseModel):
     dataset_id: str
@@ -67,26 +59,31 @@ async def ingest(data: IngestData):
         if extension not in ["pdf", "txt"]:
             continue
         response = requests.get(file)
-        if extension == "txt":
-            content = response.text
-            text_splitter = CharacterTextSplitter.from_huggingface_tokenizer(
-                tokenizer,
-            )
-            texts = text_splitter.split_text(content)
-            documents = []
-            for text in texts:
-                document = Document(page_content=text, metadata={"dataset_id": data.dataset_id, "link": file}, id=str(uuid.uuid4()))
-                documents.append(document)
-            vector_store.add_documents(documents)
-        if extension == "pdf":
-                file_path = f"files/{folder_id}/{file_id}.{extension}"
-                with open(file_path, "wb") as f:
-                    f.write(response.content)
-                    loader = PyPDFLoader(file_path)
-                    pages = loader.load_and_split()
-                    for page in pages:
-                        document = Document(page_content=page.page_content, metadata={"dataset_id": data.dataset_id, "link": file}, id=str(uuid.uuid4()))
-                        vector_store.add_documents([document])
+        try :
+            if extension == "txt":
+                content = response.text
+                text_splitter = CharacterTextSplitter.from_huggingface_tokenizer(
+                    tokenizer,
+                    chunk_size=10000,
+                )
+                texts = text_splitter.split_text(content)
+                documents = []
+                for text in texts:
+                    document = Document(page_content=text, metadata={"dataset_id": data.dataset_id, "link": file}, id=str(uuid.uuid4()))
+                    documents.append(document)
+                vector_store.add_documents(documents)
+            if extension == "pdf":
+                    file_path = f"files/{folder_id}/{file_id}.{extension}"
+                    with open(file_path, "wb") as f:
+                        f.write(response.content)
+                        loader = PyPDFLoader(file_path)
+                        pages = loader.load_and_split()
+                        for page in pages:
+                            document = Document(page_content=page.page_content, metadata={"dataset_id": data.dataset_id, "link": file}, id=str(uuid.uuid4()))
+                            vector_store.add_documents([document])
+        except Exception as e:
+            print(e)
+            continue
     return {"message": "OK"}
 
 @app.get("/retreive/")
