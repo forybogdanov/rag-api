@@ -8,8 +8,11 @@ from pydantic import BaseModel
 from langchain_community.document_loaders import PyPDFLoader
 import requests
 from langchain_chroma import Chroma
+from langchain_text_splitters import CharacterTextSplitter
+from transformers import GPT2TokenizerFast
 
-# TODO: try large model
+# also works with "BAAI/bge-large-en"
+# model_name = "BAAI/bge-small-en"
 model_name = "BAAI/bge-small-en"
 model_kwargs = {"device": "cpu"}
 encode_kwargs = {"normalize_embeddings": True}
@@ -17,11 +20,16 @@ embeddings = HuggingFaceBgeEmbeddings(
     model_name=model_name, model_kwargs=model_kwargs, encode_kwargs=encode_kwargs
 )
 
+tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
+
+# TODO split code into multiple files
+
 class IngestData(BaseModel):
     files: List[str]
     dataset_id: str
     # TODO: add metadata
     # metadata: dict = {}
+    # TODO maybe add chunk_size
 
 class RetreiveData(BaseModel):
     prompt: str
@@ -58,23 +66,27 @@ async def ingest(data: IngestData):
         extension = file.split(".")[-1]
         if extension not in ["pdf", "txt"]:
             continue
-        filepath = f"files/{folder_id}/{file_id}.{extension}"
         response = requests.get(file)
-        with open(filepath, 'wb') as f:
-            f.write(response.content)
-            if extension == "txt":
-                with open(filepath, "r") as f:
-                    content = f.read()
-                document = Document(page_content=content, metadata={"dataset_id": data.dataset_id, "link": file}, id=file_id)
-                vector_store.add_documents([document])
-            elif extension == "pdf":
-                loader = PyPDFLoader(filepath)
-                pages = loader.load_and_split()
-                for page in pages:
-                    document = Document(page_content=page.page_content, metadata={"dataset_id": data.dataset_id, "link": file}, id=str(uuid.uuid4()))
-                    vector_store.add_documents([document])
-            else:
-                continue
+        if extension == "txt":
+            content = response.text
+            text_splitter = CharacterTextSplitter.from_huggingface_tokenizer(
+                tokenizer,
+            )
+            texts = text_splitter.split_text(content)
+            documents = []
+            for text in texts:
+                document = Document(page_content=text, metadata={"dataset_id": data.dataset_id, "link": file}, id=str(uuid.uuid4()))
+                documents.append(document)
+            vector_store.add_documents(documents)
+        if extension == "pdf":
+                file_path = f"files/{folder_id}/{file_id}.{extension}"
+                with open(file_path, "wb") as f:
+                    f.write(response.content)
+                    loader = PyPDFLoader(file_path)
+                    pages = loader.load_and_split()
+                    for page in pages:
+                        document = Document(page_content=page.page_content, metadata={"dataset_id": data.dataset_id, "link": file}, id=str(uuid.uuid4()))
+                        vector_store.add_documents([document])
     return {"message": "OK"}
 
 @app.get("/retreive/")
