@@ -89,7 +89,7 @@ async def ingest(data: IngestData):
             continue
     return {"message": "OK"}
 
-@app.get("/retreive/")
+@app.get("/retrieve/")
 async def search(data: RetreiveData):
     if (data.dataset_id is None or data.dataset_id == "" or data.prompt is None or data.prompt == ""):
         return {"message": "Invalid request"}
