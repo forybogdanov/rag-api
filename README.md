@@ -9,9 +9,7 @@ This project is a **Retrieval-Augmented Generation (RAG) API** built using FastA
 
 4 **OCR PDF**: Extract text from PDF files using OCR.
 
-## Requirements
-
-### Python Packages
+## Python Packages
 - `fastapi`: For building the API.
 - `uvicorn`: ASGI server to run FastAPI.
 - `langchain`: For document processing and embeddings.
@@ -21,12 +19,6 @@ This project is a **Retrieval-Augmented Generation (RAG) API** built using FastA
 - `transformers`: Hugging Face model for tokenization.
 - `Chroma`: Vector store for similarity search.
 - `PyPDFLoader`: For loading and splitting PDF documents.
-
-You can install the required packages using the following command:
-
-```bash
-pip install fastapi uvicorn langchain langchain-chroma transformers pydantic requests
-```
 
 ## Setup and Installation
 
@@ -48,7 +40,7 @@ pip install -r requirements.txt
 Use `uvicorn` to start the FastAPI server:
 
 ```bash
-uvicorn main:app --reload
+uvicorn app:app --reload
 ```
 
 The API will be available at `http://127.0.0.1:8000`.
@@ -74,7 +66,9 @@ The API will be available at `http://127.0.0.1:8000`.
 ```json
 {
     "files": ["<URL-of-file>"],
-    "dataset_id": "<unique-dataset-id>"
+    "dataset_id": "<unique-dataset-id>",
+    // metadata is optional dictionary
+    "metadata": {"key": "value"}
 }
 ```
 
@@ -93,7 +87,11 @@ The API will be available at `http://127.0.0.1:8000`.
 ```json
 {
     "prompt": "<search-query>",
-    "dataset_id": "<unique-dataset-id>"
+    "dataset_id": "<unique-dataset-id>",
+    // optional default set to 3
+    "top_k": "<number>",
+    // optional filter dictionary based on metadata
+    "filter": {"key": "value"}
 }
 ```
 
@@ -129,14 +127,11 @@ A list of matching document chunks is returned based on similarity search.
 
 ```
 .
-├── main.py            # The main API code
+├── app.py            # The app API code
 ├── requirements.txt   # Required Python packages
 └── files/             # Folder for temporarily storing downloaded files
 ```
 
 ## Future Improvements
 
-- **Metadata support**: Add metadata to documents (e.g., author, date).
 - **Chunk size customization**: Allow custom chunk sizes during ingestion.
-- **Filters**: Add filters for more specific search results.
-- **Top K results**: Add functionality to return the top K results for queries.

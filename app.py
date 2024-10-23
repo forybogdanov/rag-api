@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Optional
 from fastapi import FastAPI
 from langchain_core.documents import Document
 import uuid
@@ -25,10 +25,13 @@ tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
 class IngestData(BaseModel):
     files: List[str]
     dataset_id: str
+    metadata: Optional[dict] = {}
 
 class RetreiveData(BaseModel):
     prompt: str
     dataset_id: str
+    top_k: Optional[int] = 3
+    filter: Optional[dict] = {}
 
 class DeleteData(BaseModel):
     dataset_id: str
@@ -69,7 +72,7 @@ async def ingest(data: IngestData):
                 texts = text_splitter.split_text(content)
                 documents = []
                 for text in texts:
-                    document = Document(page_content=text, metadata={"dataset_id": data.dataset_id, "link": file}, id=str(uuid.uuid4()))
+                    document = Document(page_content=text, metadata={"dataset_id": data.dataset_id, "link": file, **data.metadata}, id=str(uuid.uuid4()))
                     documents.append(document)
                 vector_store.add_documents(documents)
             if extension == "pdf":
@@ -79,7 +82,7 @@ async def ingest(data: IngestData):
                         loader = PyPDFLoader(file_path)
                         pages = loader.load_and_split()
                         for page in pages:
-                            document = Document(page_content=page.page_content, metadata={"dataset_id": data.dataset_id, "link": file}, id=str(uuid.uuid4()))
+                            document = Document(page_content=page.page_content, metadata={"dataset_id": data.dataset_id, "link": file, **data.metadata}, id=str(uuid.uuid4()))
                             vector_store.add_documents([document])
         except Exception as e:
             print(e)
@@ -91,7 +94,7 @@ async def search(data: RetreiveData):
     if (data.dataset_id is None or data.dataset_id == "" or data.prompt is None or data.prompt == ""):
         return {"message": "Invalid request"}
     vector_store = Chroma(data.dataset_id, embeddings, "./tmp/chroma.db")
-    results = vector_store.similarity_search(data.prompt)
+    results = vector_store.similarity_search(data.prompt, data.top_k, filter=data.filter)
     return results
 
 @app.delete("/delete/")
